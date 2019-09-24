@@ -1,8 +1,11 @@
 .btnSbm {
-    background: #2834ff;
+    background: #1bb300;
     color: white;
 }
 
-.inputText{
-
+.deleteBtn {
+    background: #ff0e11;
+    color: white;
 }
+
+

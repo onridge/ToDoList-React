@@ -1,62 +1,78 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './style.css';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import TodoList from './TodoList'
+import TodoItems from './TodoItems'
 
-class App extends React.Component{
-    constructor(props){
-        super(props);
-        this.state = {toDoList : []};
+
+class App extends React.Component {
+    constructor(){
+        super();
+        this.state = {
+            items: [],
+            currentItem: {text:'', id:''}
+        }
     }
 
-    handleSubmit = (event) => {
+    handleInput = (event) =>{
+        const itemText = event.target.value;
+        const currentItem = {text: itemText, id: Math.random() * 100};
+        this.setState({
+            currentItem,
+        })
+    };
+
+    addItem = (event) =>{
         event.preventDefault();
-        const value = (event.target.elements.todoitem.value);
-        this.setState(({toDoList}) => ({
-            toDoList : toDoList.concat(value)
-        }))
+        const newItem = this.state.currentItem;
+        if(newItem.text !== ''){
+            const items = [...this.state.items, newItem];
+            this.setState({
+                items: items,
+                currentItem: {text:'', id: ''},
+            })
+        } else {
+            alert('Field input is empty')
+        }
+    };
+
+    checkItem = (id) => {
+        const findItems = this.state.items.filter((item)=>{
+                if(item.id === id){
+                    item.checked = !item.checked;
+                    console.log(item.id, item.checked)
+                }
+                return item;
+        });
+        this.setState({
+            items: findItems,
+        })
+    };
+
+    deleteItem = (id) =>{
+        const filteredItems = this.state.items.filter((item)=>{
+            return item.id !== id
+        });
+        this.setState({
+            items: filteredItems,
+        })
     };
 
     render() {
-        const {toDoList} = this.state;
         return (
-            <div>
-                <h1>Что нужно сделать?</h1>
-                <form onSubmit={this.handleSubmit}>
-                    <input
-                        className='inputText'
-                        type = 'text'
-                        name = 'todoitem'
-                    />
-                    <button className='btnSbm' type='submit'> Отправить </button>
-                </form>
-                <div>
-                    <h2>Список задач: </h2>
-                    {toDoList.map(i => <ToDoItem item = {i}/>)}
-                </div>
-            </div>
-
-        )
-    }
-}
-
-class ToDoItem extends React.Component{
-
-    render(){
-        const {item} = this.props;
-        return (
-            <div>
-                <ul>
-                    <li>
-                        {item}
-                        <button name = 'remove'> Удалить </button>
-                    </li>
-                </ul>
+            <div className="App">
+                <TodoList addItem = {this.addItem}
+                          inputElement = {this.inputElement}
+                          handleInput = {this.handleInput}
+                          currentItem = {this.state.currentItem} />
+                <TodoItems entries = {this.state.items}
+                           checkItem = {this.checkItem}
+                           deleteItem = {this.deleteItem}/>
             </div>
         )
     }
 }
 
 ReactDOM.render(
-        <App />,
-        document.getElementById('root')
+    <App />,
+    document.getElementById('root')
 );
